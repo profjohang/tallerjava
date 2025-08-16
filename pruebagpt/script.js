@@ -10,6 +10,7 @@ let selectedTypes = [];
 let selectedGeneration = "";
 let sortCriteria = "id";
 
+// Paginación
 let currentPage = 1;
 const pageSize = 25;
 
@@ -49,8 +50,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 // ===================
 async function loadAllPokemon() {
     try {
-        // 📌 Carga un número mayor de Pokémon para incluir otras generaciones
-        const limit = 1000;
+        const limit = 200; // puedes cambiarlo a 1000 si quieres TODAS las gens
         const response = await fetch(`${API_BASE_URL}/pokemon?limit=${limit}`);
         
         if (!response.ok) {
@@ -61,11 +61,9 @@ async function loadAllPokemon() {
 
         const promises = data.results.map(async (p) => {
             const res = await fetch(p.url);
-            
             if (!res.ok) {
                 throw new Error(`Error al cargar datos de ${p.name}: ${res.status}`);
             }
-            
             return res.json();
         });
         allPokemon = await Promise.all(promises);
@@ -84,10 +82,9 @@ function applyFilters() {
         .filter(p => filterByGeneration(p));
 
     sortPokemon();
-    currentPage = 1; // reinicia a primera página al aplicar filtros
+    currentPage = 1; // reinicia página
     renderPokemonGrid();
 }
-
 
 function filterByName(pokemon) {
     return pokemon.name.toLowerCase().includes(searchTerm.toLowerCase());
@@ -144,14 +141,14 @@ function renderPokemonGrid() {
         emptyMessage.classList.add("hidden");
     }
 
-    // calcular indices de la página
+    // paginación
     const start = (currentPage - 1) * pageSize;
     const end = start + pageSize;
     const pageItems = filteredPokemon.slice(start, end);
 
     pageItems.forEach(pokemon => {
         const card = document.createElement("div");
-        card.className = "bg-white p-4 rounded shadow hover:shadow-lg transition cursor-pointer";
+        card.className = "bg-white p-4 rounded shadow hover:shadow-lg transition";
 
         card.innerHTML = `
             <img src="${pokemon.sprites.front_default}" 
@@ -161,9 +158,15 @@ function renderPokemonGrid() {
             <div class="flex justify-center flex-wrap mt-2">
                 ${createTypeBadges(pokemon.types)}
             </div>
+            <div class="flex justify-center mt-3">
+                <button class="details-btn px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm">
+                    Ver detalles
+                </button>
+            </div>
         `;
 
-        card.addEventListener("click", () => {
+        const detailsBtn = card.querySelector(".details-btn");
+        detailsBtn.addEventListener("click", () => {
             showPokemonDetails(pokemon.id);
         });
 
@@ -171,6 +174,7 @@ function renderPokemonGrid() {
     });
 
     renderPaginationControls();
+}
 
 function renderPaginationControls() {
     let pagination = document.getElementById("pagination");
@@ -213,8 +217,6 @@ function renderPaginationControls() {
     pagination.appendChild(prevBtn);
     pagination.appendChild(info);
     pagination.appendChild(nextBtn);
-}
-
 }
 
 function createTypeBadges(types) {
