@@ -337,7 +337,6 @@ function getAbilityEmoji(name) {
     return "✨"; // emoji por defecto
 }
 
-
 // ===================
 // EVENTOS
 // ===================
