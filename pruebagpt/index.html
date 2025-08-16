@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PokéDex Avanzada</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+
+    <!-- HEADER -->
+    <header class="bg-red-500 text-white p-4 flex justify-between items-center shadow">
+        <h1 class="text-2xl font-bold">PokéDex ⚡</h1>
+        <nav>
+            <a href="#" class="px-3 hover:underline">Inicio</a>
+            <a href="#" class="px-3 hover:underline">Acerca</a>
+        </nav>
+    </header>
+
+    <!-- LAYOUT -->
+    <div class="flex flex-1">
+        
+        <!-- SIDEBAR -->
+        <aside class="w-64 bg-white shadow p-4 space-y-6">
+            <!-- Búsqueda -->
+            <div>
+                <label for="search" class="block font-semibold mb-1">Buscar Pokémon</label>
+                <input id="search" type="text" placeholder="Ej: pikachu"
+                    class="w-full border rounded p-2 focus:outline-none focus:ring focus:border-blue-300">
+            </div>
+
+            <!-- Filtro por tipo -->
+            <div>
+                <h2 class="font-semibold mb-2">Tipos</h2>
+                <div id="typeFilters" class="flex flex-wrap gap-2">
+                    <!-- Botones de tipos se crean con JS -->
+                </div>
+            </div>
+
+            <!-- Filtro por generación -->
+            <div>
+                <label for="generation" class="block font-semibold mb-1">Generación</label>
+                <select id="generation" class="w-full border rounded p-2">
+                    <option value="">Todas</option>
+                    <option value="1">Kanto (1-151)</option>
+                    <option value="2">Johto (152-251)</option>
+                    <option value="3">Hoenn (252-386)</option>
+                    <option value="4">Sinnoh (387-493)</option>
+                    <option value="5">Unova (494-649)</option>
+                    <option value="6">Kalos (650-721)</option>
+                    <option value="7">Alola (722-809)</option>
+                </select>
+            </div>
+
+            <!-- Orden -->
+            <div>
+                <label for="sort" class="block font-semibold mb-1">Ordenar por</label>
+                <select id="sort" class="w-full border rounded p-2">
+                    <option value="id">ID</option>
+                    <option value="name">Nombre</option>
+                    <option value="height">Altura</option>
+                    <option value="weight">Peso</option>
+                </select>
+            </div>
+
+            <!-- Limpiar filtros -->
+            <div>
+                <button id="clearFilters" class="bg-gray-300 w-full py-2 rounded hover:bg-gray-400">
+                    Limpiar filtros
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="flex-1 p-6">
+            <!-- Contador -->
+            <div class="mb-4 text-gray-700 font-semibold">
+                <span id="resultsCount">0</span> Pokémon encontrados
+            </div>
+
+            <!-- Grid de Pokémon -->
+            <div id="pokemonGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                <!-- Tarjetas generadas con JS -->
+            </div>
+
+            <!-- Loading -->
+            <div id="loading" class="text-center py-8 hidden">
+                <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                <p class="mt-2 text-gray-600">Cargando Pokémon...</p>
+            </div>
+
+            <!-- Mensaje vacío -->
+            <div id="emptyMessage" class="hidden text-center text-gray-500 mt-6">
+                No se encontraron resultados.
+            </div>
+        </main>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="bg-red-500 text-white p-4 text-center">
+        <p>PokéDex Avanzada - Desarrollado en Taller JS</p>
+    </footer>
+
+    <script src="script.js"></script>
+    <!-- Modal -->
+<div id="pokemonModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center mb-4">
+            <h2 id="modalTitle" class="text-2xl font-bold text-blue-600"></h2>
+            <button id="closeModal" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+        </div>
+        <div id="modalContent">
+            <!-- El contenido del modal se carga con JS -->
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
+
