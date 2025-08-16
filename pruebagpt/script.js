@@ -282,11 +282,15 @@ function showPokemonDetails(pokemonId) {
             <h3 class="font-semibold text-gray-700 mb-2">Tipos:</h3>
             ${createTypeBadges(pokemon.types)}
         </div>
+
         <div class="mb-4">
             <h3 class="font-semibold text-gray-700 mb-2">Habilidades:</h3>
             <p class="text-gray-800">
                 ${pokemon.abilities
-                    .map(a => `✨ ${a.ability.name.replace('-', ' ')}`)
+                    .map(a => {
+                        const name = a.ability.name.replace('-', ' ');
+                        return `${getAbilityEmoji(name)} ${name}`;
+                    })
                     .join(', ')}
             </p>
         </div>
@@ -319,6 +323,20 @@ function createStatsDisplay(stats) {
         `;
     }).join('');
 }
+
+function getAbilityEmoji(name) {
+    const n = name.toLowerCase();
+    if (n.includes("chlorophyll") || n.includes("overgrow") || n.includes("leaf") || n.includes("grass")) return "🌱";
+    if (n.includes("blaze") || n.includes("fire") || n.includes("flame")) return "🔥";
+    if (n.includes("torrent") || n.includes("water") || n.includes("rain")) return "💧";
+    if (n.includes("volt") || n.includes("electric") || n.includes("static")) return "⚡";
+    if (n.includes("wind") || n.includes("air")) return "🌀";
+    if (n.includes("strong") || n.includes("power") || n.includes("force")) return "💪";
+    if (n.includes("defense") || n.includes("armor") || n.includes("guard")) return "🛡️";
+    if (n.includes("dark") || n.includes("shadow") || n.includes("night")) return "🌙";
+    return "✨"; // emoji por defecto
+}
+
 
 // ===================
 // EVENTOS
