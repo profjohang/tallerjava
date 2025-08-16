@@ -141,9 +141,7 @@ function renderPokemonGrid() {
             </div>
         `;
 
-        // 📌 Evento para abrir modal
         card.addEventListener("click", () => {
-            console.log("Clic en tarjeta, ID:", pokemon.id);
             showPokemonDetails(pokemon.id);
         });
 
@@ -183,10 +181,10 @@ function createTypeBadges(types) {
 // ===================
 // MODAL
 // ===================
-async function showPokemonDetails(pokemonId) {
+function showPokemonDetails(pokemonId) {
     showLoading(true);
 
-    // Busca el Pokémon en los datos ya cargados
+    // Encuentra el Pokémon en la lista ya cargada
     const pokemon = allPokemon.find(p => p.id === pokemonId);
 
     if (!pokemon) {
@@ -232,10 +230,28 @@ async function showPokemonDetails(pokemonId) {
     showLoading(false);
 }
 
+function createStatsDisplay(stats) {
+    return stats.map(stat => {
+        const statName = stat.stat.name.replace('-', ' ');
+        const statValue = stat.base_stat;
+        const percentage = Math.min((statValue / 200) * 100, 100);
+        return `
+            <div class="mb-2">
+                <div class="flex justify-between text-sm">
+                    <span class="capitalize">${statName}</span>
+                    <span>${statValue}</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div class="bg-blue-500 h-2 rounded-full" style="width: ${percentage}%"></div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
 // ===================
 // EVENTOS
 // ===================
-// Búsqueda
 let searchTimeout;
 searchInput.addEventListener("input", e => {
     clearTimeout(searchTimeout);
@@ -299,7 +315,6 @@ clearFiltersBtn.addEventListener("click", () => {
     applyFilters();
 });
 
-// Cerrar modal
 closeModal.addEventListener("click", () => {
     pokemonModal.classList.add("hidden");
     pokemonModal.classList.remove("flex");
@@ -322,7 +337,3 @@ function showLoading(show) {
         loading.classList.add("hidden");
     }
 }
-
-
-
-
