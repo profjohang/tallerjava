@@ -46,10 +46,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 // ===================
 async function loadAllPokemon() {
     try {
-        const limit = 151; // Limitar a la primera generación
+        // 📌 Carga un número mayor de Pokémon para incluir otras generaciones
+        const limit = 1000;
         const response = await fetch(`${API_BASE_URL}/pokemon?limit=${limit}`);
         
-        // 📌 VALIDACIÓN DE RESPUESTA
         if (!response.ok) {
             throw new Error(`Error HTTP: ${response.status}`);
         }
@@ -59,7 +59,6 @@ async function loadAllPokemon() {
         const promises = data.results.map(async (p) => {
             const res = await fetch(p.url);
             
-            // 📌 VALIDACIÓN DE RESPUESTA INDIVIDUAL
             if (!res.ok) {
                 throw new Error(`Error al cargar datos de ${p.name}: ${res.status}`);
             }
@@ -104,6 +103,7 @@ function filterByGeneration(pokemon) {
         "5": [494, 649],
         "6": [650, 721],
         "7": [722, 809],
+        "8": [810, 898]
     };
     const [start, end] = generationRanges[selectedGeneration];
     return pokemon.id >= start && pokemon.id <= end;
