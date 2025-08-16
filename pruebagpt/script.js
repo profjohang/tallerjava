@@ -46,11 +46,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 // ===================
 async function loadAllPokemon() {
     try {
-        const limit = 151;
+        const limit = 151; // Limitar a la primera generación
         const response = await fetch(`${API_BASE_URL}/pokemon?limit=${limit}`);
         const data = await response.json();
 
-        const promises = data.results.map(p => fetch(p.url).then(res => res.json()));
+        const promises = data.results.map(async (p) => {
+            const res = await fetch(p.url);
+            return res.json();
+        });
         allPokemon = await Promise.all(promises);
     } catch (error) {
         console.error("Error cargando Pokémon:", error);
@@ -170,7 +173,7 @@ function createTypeBadges(types) {
         fairy: 'bg-pink-300'
     };
 
-    return types.map(t => 
+    return types.map(t =>
         `<span class="px-2 py-1 m-1 text-xs text-white rounded ${colors[t.type.name] || 'bg-gray-400'}">
             ${t.type.name}
         </span>`
