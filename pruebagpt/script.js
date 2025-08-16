@@ -184,73 +184,52 @@ function createTypeBadges(types) {
 // MODAL
 // ===================
 async function showPokemonDetails(pokemonId) {
-    try {
-        showLoading(true);
-        console.log("Abriendo detalles para ID:", pokemonId);
+    showLoading(true);
 
-        const response = await fetch(`${API_BASE_URL}/pokemon/${pokemonId}`);
-        const pokemon = await response.json();
-        console.log("Datos recibidos:", pokemon);
+    // Busca el Pokémon en los datos ya cargados
+    const pokemon = allPokemon.find(p => p.id === pokemonId);
 
-        modalTitle.textContent = `#${pokemon.id} ${pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1)}`;
+    if (!pokemon) {
+        console.error("Pokémon no encontrado en los datos locales:", pokemonId);
+        showLoading(false);
+        return;
+    }
 
-        modalContent.innerHTML = `
-            <div class="text-center mb-4">
-                <img src="${pokemon.sprites.front_default}" alt="${pokemon.name}" class="w-32 h-32 mx-auto">
-            </div>
-            <div class="grid grid-cols-2 gap-4 mb-4">
-                <div>
-                    <h3 class="font-semibold text-gray-700">Altura:</h3>
-                    <p>${pokemon.height / 10} m</p>
-                </div>
-                <div>
-                    <h3 class="font-semibold text-gray-700">Peso:</h3>
-                    <p>${pokemon.weight / 10} kg</p>
-                </div>
-            </div>
-            <div class="mb-4">
-                <h3 class="font-semibold text-gray-700 mb-2">Tipos:</h3>
-                ${createTypeBadges(pokemon.types)}
-            </div>
-            <div class="mb-4">
-                <h3 class="font-semibold text-gray-700 mb-2">Habilidades:</h3>
-                <ul class="list-disc list-inside">
-                    ${pokemon.abilities.map(a => `<li class="capitalize">${a.ability.name.replace('-', ' ')}</li>`).join('')}
-                </ul>
+    modalTitle.textContent = `#${pokemon.id} ${pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1)}`;
+
+    modalContent.innerHTML = `
+        <div class="text-center mb-4">
+            <img src="${pokemon.sprites.front_default}" alt="${pokemon.name}" class="w-32 h-32 mx-auto">
+        </div>
+        <div class="grid grid-cols-2 gap-4 mb-4">
+            <div>
+                <h3 class="font-semibold text-gray-700">Altura:</h3>
+                <p>${pokemon.height / 10} m</p>
             </div>
             <div>
-                <h3 class="font-semibold text-gray-700 mb-2">Estadísticas Base:</h3>
-                ${createStatsDisplay(pokemon.stats)}
+                <h3 class="font-semibold text-gray-700">Peso:</h3>
+                <p>${pokemon.weight / 10} kg</p>
             </div>
-        `;
+        </div>
+        <div class="mb-4">
+            <h3 class="font-semibold text-gray-700 mb-2">Tipos:</h3>
+            ${createTypeBadges(pokemon.types)}
+        </div>
+        <div class="mb-4">
+            <h3 class="font-semibold text-gray-700 mb-2">Habilidades:</h3>
+            <ul class="list-disc list-inside">
+                ${pokemon.abilities.map(a => `<li class="capitalize">${a.ability.name.replace('-', ' ')}</li>`).join('')}
+            </ul>
+        </div>
+        <div>
+            <h3 class="font-semibold text-gray-700 mb-2">Estadísticas Base:</h3>
+            ${createStatsDisplay(pokemon.stats)}
+        </div>
+    `;
 
-        pokemonModal.classList.remove("hidden");
-        pokemonModal.classList.add("flex");
-
-    } catch (error) {
-        console.error("Error al cargar detalles:", error);
-    } finally {
-        showLoading(false);
-    }
-}
-
-function createStatsDisplay(stats) {
-    return stats.map(stat => {
-        const statName = stat.stat.name.replace('-', ' ');
-        const statValue = stat.base_stat;
-        const percentage = Math.min((statValue / 200) * 100, 100);
-        return `
-            <div class="mb-2">
-                <div class="flex justify-between text-sm">
-                    <span class="capitalize">${statName}</span>
-                    <span>${statValue}</span>
-                </div>
-                <div class="w-full bg-gray-200 rounded-full h-2">
-                    <div class="bg-blue-500 h-2 rounded-full" style="width: ${percentage}%"></div>
-                </div>
-            </div>
-        `;
-    }).join('');
+    pokemonModal.classList.remove("hidden");
+    pokemonModal.classList.add("flex");
+    showLoading(false);
 }
 
 // ===================
