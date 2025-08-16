@@ -48,10 +48,22 @@ async function loadAllPokemon() {
     try {
         const limit = 151; // Limitar a la primera generación
         const response = await fetch(`${API_BASE_URL}/pokemon?limit=${limit}`);
+        
+        // 📌 VALIDACIÓN DE RESPUESTA
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status}`);
+        }
+        
         const data = await response.json();
 
         const promises = data.results.map(async (p) => {
             const res = await fetch(p.url);
+            
+            // 📌 VALIDACIÓN DE RESPUESTA INDIVIDUAL
+            if (!res.ok) {
+                throw new Error(`Error al cargar datos de ${p.name}: ${res.status}`);
+            }
+            
             return res.json();
         });
         allPokemon = await Promise.all(promises);
@@ -141,7 +153,6 @@ function renderPokemonGrid() {
             </div>
         `;
 
-        // 📌 Corrección del evento click
         card.addEventListener("click", () => {
             showPokemonDetails(pokemon.id);
         });
@@ -150,13 +161,41 @@ function renderPokemonGrid() {
     });
 }
 
+function createTypeBadges(types) {
+    const colors = {
+        normal: 'bg-gray-400',
+        fire: 'bg-red-500',
+        water: 'bg-blue-500',
+        electric: 'bg-yellow-400',
+        grass: 'bg-green-500',
+        ice: 'bg-blue-300',
+        fighting: 'bg-red-700',
+        poison: 'bg-purple-500',
+        ground: 'bg-yellow-600',
+        flying: 'bg-indigo-400',
+        psychic: 'bg-pink-500',
+        bug: 'bg-green-400',
+        rock: 'bg-yellow-800',
+        ghost: 'bg-purple-700',
+        dragon: 'bg-indigo-700',
+        dark: 'bg-gray-800',
+        steel: 'bg-gray-500',
+        fairy: 'bg-pink-300'
+    };
+
+    return types.map(t =>
+        `<span class="px-2 py-1 m-1 text-xs text-white rounded ${colors[t.type.name] || 'bg-gray-400'}">
+            ${t.type.name}
+        </span>`
+    ).join('');
+}
+
 // ===================
 // MODAL
 // ===================
 function showPokemonDetails(pokemonId) {
     showLoading(true);
 
-    // Encuentra el Pokémon en la lista ya cargada
     const pokemon = allPokemon.find(p => p.id === pokemonId);
 
     if (!pokemon) {
