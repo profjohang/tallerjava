@@ -10,6 +10,9 @@ let selectedTypes = [];
 let selectedGeneration = "";
 let sortCriteria = "id";
 
+let currentPage = 1;
+const pageSize = 25;
+
 // ===================
 // REFERENCIAS AL DOM
 // ===================
@@ -81,8 +84,10 @@ function applyFilters() {
         .filter(p => filterByGeneration(p));
 
     sortPokemon();
+    currentPage = 1; // reinicia a primera página al aplicar filtros
     renderPokemonGrid();
 }
+
 
 function filterByName(pokemon) {
     return pokemon.name.toLowerCase().includes(searchTerm.toLowerCase());
@@ -139,7 +144,12 @@ function renderPokemonGrid() {
         emptyMessage.classList.add("hidden");
     }
 
-    filteredPokemon.forEach(pokemon => {
+    // calcular indices de la página
+    const start = (currentPage - 1) * pageSize;
+    const end = start + pageSize;
+    const pageItems = filteredPokemon.slice(start, end);
+
+    pageItems.forEach(pokemon => {
         const card = document.createElement("div");
         card.className = "bg-white p-4 rounded shadow hover:shadow-lg transition cursor-pointer";
 
@@ -159,6 +169,52 @@ function renderPokemonGrid() {
 
         pokemonGrid.appendChild(card);
     });
+
+    renderPaginationControls();
+
+function renderPaginationControls() {
+    let pagination = document.getElementById("pagination");
+    if (!pagination) {
+        pagination = document.createElement("div");
+        pagination.id = "pagination";
+        pagination.className = "flex justify-center items-center mt-6 gap-4";
+        pokemonGrid.parentNode.appendChild(pagination);
+    }
+
+    pagination.innerHTML = "";
+
+    const totalPages = Math.ceil(filteredPokemon.length / pageSize);
+
+    const prevBtn = document.createElement("button");
+    prevBtn.textContent = "Anterior";
+    prevBtn.className = "px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 disabled:opacity-50";
+    prevBtn.disabled = currentPage === 1;
+    prevBtn.addEventListener("click", () => {
+        if (currentPage > 1) {
+            currentPage--;
+            renderPokemonGrid();
+        }
+    });
+
+    const nextBtn = document.createElement("button");
+    nextBtn.textContent = "Siguiente";
+    nextBtn.className = "px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 disabled:opacity-50";
+    nextBtn.disabled = currentPage === totalPages;
+    nextBtn.addEventListener("click", () => {
+        if (currentPage < totalPages) {
+            currentPage++;
+            renderPokemonGrid();
+        }
+    });
+
+    const info = document.createElement("span");
+    info.textContent = `Página ${currentPage} de ${totalPages}`;
+
+    pagination.appendChild(prevBtn);
+    pagination.appendChild(info);
+    pagination.appendChild(nextBtn);
+}
+
 }
 
 function createTypeBadges(types) {
