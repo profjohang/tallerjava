@@ -284,11 +284,13 @@ function showPokemonDetails(pokemonId) {
         </div>
         <div class="mb-4">
             <h3 class="font-semibold text-gray-700 mb-2">Habilidades:</h3>
-            <ul class="list-disc list-inside">
-                ${pokemon.abilities.map(a => `<li class="capitalize">${a.ability.name.replace('-', ' ')}</li>`).join('')}
-            </ul>
+            <p class="text-gray-800">
+                ${pokemon.abilities
+                    .map(a => `✨ ${a.ability.name.replace('-', ' ')}`)
+                    .join(', ')}
+            </p>
         </div>
-        <div>
+
             <h3 class="font-semibold text-gray-700 mb-2">Estadísticas Base:</h3>
             ${createStatsDisplay(pokemon.stats)}
         </div>
